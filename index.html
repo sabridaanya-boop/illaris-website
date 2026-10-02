@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAANYA — Curated Finds</title>
+<style>
+:root{
+  --bg:#090708; --panel:#151012; --pink:#f3a7bc; --cream:#f8eadf;
+  --gold:#e7c98d; --muted:#bcaeb2; --line:#2b2024;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--cream);line-height:1.5}
+button,input{font:inherit}
+a{text-decoration:none;color:inherit}
+header{position:sticky;top:0;z-index:20;background:rgba(9,7,8,.92);backdrop-filter:blur(15px);border-bottom:1px solid var(--line)}
+.nav{max-width:1200px;margin:auto;padding:18px 24px;display:flex;align-items:center;gap:25px}
+.logo{font-family:Georgia,serif;letter-spacing:7px;font-size:24px;color:#fff}
+.logo span{color:var(--pink)}
+nav{display:flex;gap:24px;margin-left:auto}
+nav a{color:var(--muted);font-size:14px} nav a:hover{color:white}
+.actions{display:flex;gap:10px;margin-left:10px}
+.btn,.iconbtn{border:1px solid var(--line);background:transparent;color:white;padding:10px 15px;border-radius:999px;cursor:pointer}
+.btn.primary{background:var(--pink);color:#180d12;border-color:var(--pink);font-weight:700}
+.iconbtn{width:42px;height:42px;padding:0}
+.hero{max-width:1200px;margin:auto;padding:90px 24px 70px;display:grid;grid-template-columns:1.1fr .9fr;gap:50px;align-items:center}
+.kicker{color:var(--pink);letter-spacing:4px;text-transform:uppercase;font-size:12px;margin-bottom:18px}
+h1{font-family:Georgia,serif;font-weight:400;font-size:clamp(50px,8vw,92px);line-height:.92;letter-spacing:-3px}
+.hero p{color:var(--muted);max-width:560px;margin:25px 0;font-size:17px}
+.hero-art{min-height:440px;border-radius:28px;border:1px solid var(--line);position:relative;overflow:hidden;background:
+radial-gradient(circle at 70% 25%,rgba(243,167,188,.55),transparent 25%),
+radial-gradient(circle at 35% 70%,rgba(231,201,141,.3),transparent 27%),
+linear-gradient(145deg,#1c1117,#0b090a 65%);}
+.hero-art:after{content:"DAANYA";position:absolute;inset:0;display:grid;place-items:center;font-family:Georgia,serif;font-size:54px;letter-spacing:10px;color:rgba(255,255,255,.08);transform:rotate(-12deg)}
+.section{max-width:1200px;margin:auto;padding:40px 24px 80px}
+.section-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:25px}
+h2{font-family:Georgia,serif;font-weight:400;font-size:38px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px}
+.filter{padding:9px 15px;border:1px solid var(--line);border-radius:999px;color:var(--muted);background:transparent;cursor:pointer}
+.filter.active,.filter:hover{background:var(--pink);color:#1a0c12;border-color:var(--pink)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:20px;overflow:hidden;transition:.25s;position:relative}
+.card:hover{transform:translateY(-5px);border-color:#65434d}
+.photo{height:270px;display:grid;place-items:center;font-family:Georgia,serif;font-size:18px;letter-spacing:2px;color:rgba(255,255,255,.7)}
+.pink{background:linear-gradient(145deg,#5b2d3d,#e8a7ba)}
+.gold{background:linear-gradient(145deg,#4b3b24,#d5b878)}
+.plum{background:linear-gradient(145deg,#2b162a,#9b607e)}
+.cream{background:linear-gradient(145deg,#4c3936,#d8c0af)}
+.card-body{padding:17px}.tag{font-size:10px;color:var(--pink);letter-spacing:2px;text-transform:uppercase}
+.card h3{font-family:Georgia,serif;font-size:20px;font-weight:400;margin:7px 0}
+.price{font-weight:700;margin:8px 0 14px}
+.shop{width:100%;padding:11px;border-radius:12px;border:1px solid var(--pink);background:transparent;color:var(--pink);cursor:pointer}
+.shop:hover{background:var(--pink);color:#170b10}
+.searchbox{display:none;position:absolute;top:75px;left:24px;right:24px;max-width:600px;margin:auto;background:#161012;border:1px solid var(--line);padding:15px;border-radius:18px}
+.searchbox input{width:100%;background:#0d0a0b;border:1px solid var(--line);padding:13px;color:white;border-radius:12px;outline:none}
+footer{border-top:1px solid var(--line);padding:35px 24px;color:var(--muted);text-align:center;font-size:13px}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:50;align-items:center;justify-content:center;padding:20px}
+.modal.show{display:flex}.modal-box{width:min(420px,100%);background:#160f12;border:1px solid #3a272d;border-radius:22px;padding:28px}
+.modal-box h2{font-size:32px;margin-bottom:8px}.modal-box p{color:var(--muted);font-size:13px;margin-bottom:20px}
+.modal-box input{width:100%;padding:13px;margin:6px 0;background:#0d0a0b;border:1px solid var(--line);border-radius:10px;color:white}
+.close{float:right;background:none;border:0;color:var(--muted);font-size:24px;cursor:pointer}
+.modal-box .btn{width:100%;margin-top:12px}
+
+.product-detail{display:none;max-width:1000px;margin:0 auto;padding:55px 24px 80px}.product-detail.show{display:block}.product-detail-inner{display:grid;grid-template-columns:1fr 1fr;gap:42px;align-items:start;background:linear-gradient(145deg,#160e12,#0d0a0b);border:1px solid var(--line);border-radius:28px;padding:22px}.product-detail-image{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:20px;background:#151012;border:1px solid var(--line)}.product-detail-copy{padding:12px 8px}.product-detail-copy h1{font-size:clamp(34px,5vw,58px);letter-spacing:-1px;line-height:1.05}.detail-price{font-size:28px;font-weight:700;margin:18px 0}.detail-note{color:var(--muted);margin:14px 0 24px}.detail-actions{display:flex;gap:10px;flex-wrap:wrap}.detail-actions .btn{padding:13px 18px}.detail-actions #detailCopy{display:none}.related-title{margin:45px 0 20px;font-family:Georgia,serif;font-size:30px;font-weight:400}.copy-link-btn{font-size:12px;padding:8px 11px!important;white-space:nowrap}.admin-row-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}@media(max-width:850px){.product-detail-inner{grid-template-columns:1fr;gap:20px}.product-detail-copy{padding:4px}}
+@media(max-width:850px){nav{display:none}.hero{grid-template-columns:1fr;padding-top:60px}.hero-art{min-height:300px}.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){
+      .nav{padding:15px;gap:8px}
+      .logo{font-size:20px;letter-spacing:5px}
+      nav{display:none}
+      .actions{margin-left:auto;gap:6px}
+      .actions .btn{display:inline-block;padding:8px 10px;font-size:11px}
+      #adminBtn{display:inline-block}
+      .iconbtn{width:38px;height:38px}
+      .hero{padding:55px 18px}
+      .section{padding-left:18px;padding-right:18px}
+      .grid{grid-template-columns:1fr 1fr;gap:10px}
+      .photo{height:210px}
+      .card-body{padding:12px}
+      .card h3{font-size:17px}
+    }
+
+.analytics-public{margin-top:22px;display:flex;justify-content:center}.analytics-pill{border:1px solid var(--line);background:#160f12;border-radius:999px;padding:10px 16px;color:var(--muted);font-size:13px}.analytics-pill strong{color:white;font-size:16px;margin-right:4px}.analytics-admin{margin:24px 0;padding:18px;border:1px solid var(--line);border-radius:16px;background:#100b0d}.analytics-admin h3{font-family:Georgia,serif;font-weight:400;font-size:22px;margin:0 0 14px}.analytics-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:16px}.analytics-stat{padding:14px;border:1px solid var(--line);border-radius:12px;background:#0d0a0b}.analytics-stat span{display:block;color:var(--muted);font-size:12px;margin-bottom:5px}.analytics-stat strong{font-size:24px;color:white}.analytics-table{width:100%;border-collapse:collapse;font-size:13px}.analytics-table th,.analytics-table td{padding:9px 5px;border-top:1px solid var(--line);text-align:left}.analytics-table th{color:var(--muted);font-weight:400}.analytics-note{color:var(--muted);font-size:11px;margin-top:10px}@media(max-width:520px){.analytics-stats{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="nav">
+    <a class="logo" href="#">IL<span>L</span>ARIS</a>
+    <nav><a href="#home">Home</a><a href="#shop">Shop</a><a href="#trending">Trending</a><a href="#categories">Categories</a></nav>
+    <div class="actions">
+      <button class="iconbtn" id="searchBtn">⌕</button>
+      <button class="btn" id="authBtn">Admin login</button><button class="btn" id="adminBtn" style="display:none">Admin</button>
+    </div>
+  </div>
+  <div class="searchbox" id="searchBox"><input id="searchInput" placeholder="Search your next favorite find…"></div>
+</header>
+
+
+<section class="product-detail" id="productDetail" aria-live="polite"><div class="product-detail-inner"><div><img id="detailImage" class="product-detail-image" alt=""></div><div class="product-detail-copy"><div class="kicker">DAANYA Product</div><h1 id="detailName"></h1><div class="detail-price" id="detailPrice"></div><div class="detail-actions"><a class="btn primary" id="detailShop" href="#" target="_blank" rel="noopener noreferrer">Shop Now →</a><button class="btn" id="detailCopy" type="button">🔗 Copy DAANYA Link</button><a class="btn" href="#home" id="detailBack">← Explore DAANYA</a></div></div></div><h2 class="related-title">More from DAANYA</h2><div class="grid" id="relatedProducts"></div></section>
+
+<main id="home">
+<section class="hero">
+  <div>
+    <div class="kicker">The DAANYA Edit</div>
+    <h1>Find what<br><em>inspires</em> you.</h1>
+    <p>A carefully curated world of fashion, beauty and lifestyle finds — discovered for your mood, your style, and your everyday.</p>
+    <a class="btn primary" href="#shop">Explore the edit →</a>
+  </div>
+  <div class="hero-art"></div>
+</section>
+
+<section class="section" id="trending">
+  <div class="section-head"><div><div class="kicker">Curated for you</div><h2>Trending now</h2></div></div>
+  <div class="filters" id="filters">
+    <button class="filter active" data-filter="all">All</button><button class="filter" data-filter="fashion">Fashion</button>
+    <button class="filter" data-filter="beauty">Beauty</button><button class="filter" data-filter="lifestyle">Lifestyle</button>
+  </div>
+  <div class="grid" id="productGrid">
+    <article class="card" data-cat="fashion"><div class="photo pink">FASHION EDIT</div><div class="card-body"><div class="tag">Fashion</div><h3>Satin Evening Dress</h3><div class="price">₹899</div><button class="shop" data-link="#">Shop now</button></div></article>
+    <article class="card" data-cat="fashion"><div class="photo plum">SOFT LAYERS</div><div class="card-body"><div class="tag">Fashion</div><h3>Everyday Knit Top</h3><div class="price">₹499</div><button class="shop" data-link="#">Shop now</button></div></article>
+    <article class="card" data-cat="beauty"><div class="photo gold">BEAUTY EDIT</div><div class="card-body"><div class="tag">Beauty</div><h3>Glow Essentials Set</h3><div class="price">₹599</div><button class="shop" data-link="#">Shop now</button></div></article>
+    <article class="card" data-cat="lifestyle"><div class="photo cream">HOME EDIT</div><div class="card-body"><div class="tag">Lifestyle</div><h3>Minimal Desk Lamp</h3><div class="price">₹799</div><button class="shop" data-link="#">Shop now</button></div></article>
+  </div>
+</section>
+
+<section class="section" id="shop">
+  <div class="section-head"><div><div class="kicker">More to discover</div><h2>Pretty finds</h2></div></div>
+  <div class="grid">
+    <article class="card" data-cat="fashion"><div class="photo cream">THE EDIT</div><div class="card-body"><div class="tag">Fashion</div><h3>Classic Shoulder Bag</h3><div class="price">₹699</div><button class="shop" data-link="#">Shop now</button></div></article>
+    <article class="card" data-cat="beauty"><div class="photo pink">GLOW</div><div class="card-body"><div class="tag">Beauty</div><h3>Soft Blush Collection</h3><div class="price">₹399</div><button class="shop" data-link="#">Shop now</button></div></article>
+    <article class="card" data-cat="lifestyle"><div class="photo gold">LIVING</div><div class="card-body"><div class="tag">Lifestyle</div><h3>Elegant Trinket Tray</h3><div class="price">₹299</div><button class="shop" data-link="#">Shop now</button></div></article>
+    <article class="card" data-cat="fashion"><div class="photo plum">SIGNATURE</div><div class="card-body"><div class="tag">Fashion</div><h3>Statement Earrings</h3><div class="price">₹249</div><button class="shop" data-link="#">Shop now</button></div></article>
+  </div>
+</section>
+
+<section class="section" style="padding-top:0;padding-bottom:40px">
+  <div style="border:1px solid var(--line);border-radius:20px;padding:20px;background:linear-gradient(135deg,#160e12,#0d0a0b);display:flex;align-items:center;justify-content:space-between;gap:16px">
+    <div><div class="tag">Private area</div><h3 style="font-family:Georgia,serif;font-size:22px;font-weight:400;margin-top:5px">Manage your DAANYA products</h3><p style="color:var(--muted);font-size:13px;margin-top:4px">Admin only · add, edit or delete products.</p></div>
+    <button class="btn primary" id="adminShortcut" style="display:none">Open Admin</button>
+  </div>
+</section>
+
+<section class="section" id="categories">
+  <div class="kicker">A world of finds</div><h2>Shop by mood</h2>
+  <p style="color:var(--muted);max-width:620px;margin-top:10px">From quiet luxury to playful little discoveries, explore collections made to feel like your Pinterest board came to life.</p>
+</section>
+</main>
+
+
+<div class="modal" id="adminModal">
+  <div class="modal-box" style="width:min(720px,100%);max-height:90vh;overflow:auto">
+    <button class="close" id="adminClose">×</button>
+    <div class="kicker">Private editor</div>
+    <h2>Product Editor</h2>
+    <p>Add and edit the products displayed on DAANYA. Changes are saved securely in your online Supabase database.</p>
+    <form id="productForm">
+      <input type="hidden" id="editIndex" value="-1">
+      <input id="pName" required placeholder="Product name">
+      <input id="pPrice" required placeholder="Price (e.g. ₹599)">
+      <select id="pCat" style="width:100%;padding:13px;margin:6px 0;background:#0d0a0b;border:1px solid var(--line);border-radius:10px;color:white">
+        <option value="fashion">Fashion</option><option value="beauty">Beauty</option><option value="lifestyle">Lifestyle</option>
+      </select>
+      <label for="pImage" style="display:block;margin:6px 0 4px">Product image URL (optional)</label>
+      <input id="pImage" placeholder="Paste an image URL, or choose a photo below">
+      <label for="pImageFile" style="display:block;margin:8px 0 4px">Or upload product photo</label>
+      <input id="pImageFile" type="file" accept="image/*" style="width:100%">
+      <small id="imageUploadStatus" style="display:block;margin-top:5px;color:var(--muted)"></small>
+      <input id="pLink" placeholder="Your affiliate link">
+      <button class="btn primary" type="submit">Save product</button>
+      <button class="btn" type="button" id="clearForm">Clear</button>
+    </form>
+    <div id="adminAnalytics" class="analytics-admin"><h3>DAANYA Analytics</h3><div class="analytics-stats"><div class="analytics-stat"><span>Unique visitors</span><strong id="adminVisitorCount">—</strong></div><div class="analytics-stat"><span>Total Shop Now clicks</span><strong id="adminClickCount">—</strong></div></div><table class="analytics-table"><thead><tr><th>Product</th><th>Shop Now clicks</th></tr></thead><tbody id="adminClickRows"><tr><td colspan="2">Loading…</td></tr></tbody></table><div class="analytics-note">Visitor count is based on a random browser ID stored on the visitor's device. Product clicks count every Shop Now click.</div></div><div id="adminList" style="margin-top:25px"></div>
+  </div>
+</div>
+
+
+<section class="section" style="padding-top:0;padding-bottom:20px">
+  <div class="analytics-public"><div class="analytics-pill"><strong id="publicVisitorCount">—</strong> people have visited DAANYA</div></div>
+</section>
+
+<footer>
+  <div style="font-family:Georgia,serif;color:white;font-size:20px;letter-spacing:5px;margin-bottom:8px">DAANYA</div>
+  © 2026 DAANYA · Curated finds. Made for your mood.<br><br>
+  <span>Affiliate disclosure: Some links may earn DAANYA a commission if you make a qualifying purchase.</span>
+</footer>
+
+<div class="modal" id="modal">
+ <div class="modal-box">
+   <button class="close" id="close">×</button><h2 id="modalTitle">Welcome</h2><p id="modalText">Create your DAANYA account.</p>
+   <input id="authEmail" type="email" autocomplete="email" placeholder="Email address">
+   <input id="authPassword" type="password" autocomplete="current-password" placeholder="Password">
+   <button class="btn primary" id="modalAction">Continue</button>
+   <p id="authStatus" style="color:var(--muted);font-size:12px;margin-top:10px"></p>
+ </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// DAANYA + Supabase configuration
+const SUPABASE_URL = 'https://tqzymrgwbwluikbxyrvb.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_1r6cB1Hui3yRgRvVt2qwfw_DkEYKrXa';
+const ADMIN_EMAIL = 'sabridaanya@gmail.com';
+
+const modal=document.getElementById('modal'), title=document.getElementById('modalTitle'), text=document.getElementById('modalText');
+const authEmail=document.getElementById('authEmail'), authPassword=document.getElementById('authPassword'), authStatus=document.getElementById('authStatus');
+let authMode='login';
+let accessToken=localStorage.getItem('daanyaAccessToken')||'';
+let currentUser=null;
+
+function getVisitorId(){
+  let id=localStorage.getItem('daanyaVisitorId');
+  if(!id){id=(crypto.randomUUID?crypto.randomUUID():Date.now()+'-'+Math.random().toString(36).slice(2));localStorage.setItem('daanyaVisitorId',id);}
+  return id;
+}
+async function trackVisitOnce(){
+  try{
+    if(sessionStorage.getItem('daanyaVisitTracked')==='1') return;
+    const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+    const {error}=await client.rpc('track_site_visit',{p_visitor_id:getVisitorId()});
+    if(!error) sessionStorage.setItem('daanyaVisitTracked','1');
+  }catch(e){console.warn('Analytics visit tracking failed',e);}
+}
+async function trackProductClick(productId){
+  try{
+    const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+    await client.rpc('track_product_click',{p_product_id:productId,p_visitor_id:getVisitorId()});
+  }catch(e){console.warn('Analytics click tracking failed',e);}
+}
+async function loadPublicVisitorCount(){
+  try{
+    const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+    const {data,error}=await client.rpc('get_public_visitor_count');
+    if(error) throw error;
+    document.getElementById('publicVisitorCount').textContent=Number(data||0).toLocaleString();
+  }catch(e){console.warn('Public visitor count unavailable',e);}
+}
+async function loadAdminAnalytics(){
+  if(!setAuthUI()) return;
+  try{
+    const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{global:{headers:{Authorization:`Bearer ${accessToken}`}}});
+    const {data,error}=await client.rpc('get_admin_analytics');
+    if(error) throw error;
+    const visitors=Number(data?.unique_visitors||0), clicks=Number(data?.total_clicks||0);
+    document.getElementById('adminVisitorCount').textContent=visitors.toLocaleString();
+    document.getElementById('adminClickCount').textContent=clicks.toLocaleString();
+    const rows=Array.isArray(data?.products)?data.products:[];
+    document.getElementById('adminClickRows').innerHTML=rows.length?rows.map(r=>`<tr><td>${String(r.name||'Untitled').replace(/</g,'&lt;')}</td><td>${Number(r.clicks||0).toLocaleString()}</td></tr>`).join(''):'<tr><td colspan="2">No Shop Now clicks yet.</td></tr>';
+  }catch(e){
+    document.getElementById('adminClickRows').innerHTML='<tr><td colspan="2">Analytics setup is not finished yet.</td></tr>';
+    console.warn('Admin analytics unavailable',e);
+  }
+}
+
+function authHeaders(token=accessToken){return {apikey:SUPABASE_PUBLISHABLE_KEY,Authorization:`Bearer ${token}`, 'Content-Type':'application/json'};}
+async function uploadProductImage(file){
+  if(!file) return '';
+  if(!file.type.startsWith('image/')) throw new Error('Please choose an image file.');
+  if(file.size > 8 * 1024 * 1024) throw new Error('Please choose an image smaller than 8 MB.');
+  if(!accessToken) throw new Error('Please log in again before uploading an image.');
+  if(!window.supabase) throw new Error('Image service is still loading. Please refresh the page and try again.');
+  const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{global:{headers:{Authorization:`Bearer ${accessToken}`}}});
+  const safeExt=(file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'')||'jpg';
+  const unique=(crypto.randomUUID?crypto.randomUUID():Date.now()+'-'+Math.random().toString(36).slice(2));
+  const path=`${unique}.${safeExt}`;
+  const {error}=await client.storage.from('product-images').upload(path,file,{contentType:file.type,upsert:false,cacheControl:'3600'});
+  if(error) throw new Error('Image upload failed. '+error.message);
+  const {data}=client.storage.from('product-images').getPublicUrl(path);
+  if(!data || !data.publicUrl) throw new Error('Image was uploaded, but its public link could not be created.');
+  return data.publicUrl;
+}
+
+function setAuthUI(){
+  const isAdmin=!!(currentUser && currentUser.email===ADMIN_EMAIL && currentUser.app_metadata && currentUser.app_metadata.role==='admin');
+  document.getElementById('adminBtn').style.display=isAdmin?'inline-block':'none';
+  document.getElementById('adminShortcut').style.display=isAdmin?'inline-block':'none';
+  const detailCopy=document.getElementById('detailCopy');
+  if(detailCopy) detailCopy.style.display='none';
+  document.getElementById('authBtn').textContent=currentUser?'Log out':'Admin login';
+  return isAdmin;
+}
+async function getCurrentUser(){
+  if(!accessToken){setAuthUI();return null;}
+  try{
+    const r=await fetch(`${SUPABASE_URL}/auth/v1/user`,{headers:authHeaders()});
+    if(!r.ok) throw new Error('Session expired');
+    currentUser=await r.json(); setAuthUI(); return currentUser;
+  }catch(e){accessToken='';localStorage.removeItem('daanyaAccessToken');currentUser=null;setAuthUI();return null;}
+}
+function openAuth(mode){
+  authMode=mode; title.textContent=mode==='signup'?'Create your account':'Welcome back';
+  text.textContent=mode==='signup'?'Join DAANYA and save your favorite finds.':'Log in to continue.';
+  authEmail.value='';authPassword.value='';authStatus.textContent='';
+  modal.classList.add('show');
+}
+document.querySelectorAll('[data-modal]').forEach(b=>b.onclick=()=>openAuth(b.dataset.modal==='signup'?'signup':'login'));
+document.getElementById('authBtn').onclick=async()=>{
+  if(currentUser){
+    accessToken='';currentUser=null;localStorage.removeItem('daanyaAccessToken');setAuthUI();alert('You are logged out.');return;
+  }
+  openAuth('login');
+};
+document.getElementById('close').onclick=()=>modal.classList.remove('show');
+modal.onclick=e=>{if(e.target===modal)modal.classList.remove('show')};
+
+document.getElementById('modalAction').onclick=async()=>{
+  const email=authEmail.value.trim(), password=authPassword.value;
+  if(!email||!password){authStatus.textContent='Please enter your email and password.';return;}
+  authStatus.textContent='Please wait…';
+  const endpoint=authMode==='signup'?'/auth/v1/signup':'/auth/v1/token?grant_type=password';
+  try{
+    const r=await fetch(SUPABASE_URL+endpoint,{method:'POST',headers:{apikey:SUPABASE_PUBLISHABLE_KEY,'Content-Type':'application/json'},body:JSON.stringify({email,password})});
+    const data=await r.json();
+    if(!r.ok) throw new Error(data.msg||data.error_description||data.message||'Authentication failed.');
+    if(authMode==='signup' && !data.access_token){authStatus.textContent='Account created. Check your email to confirm it, then log in.';return;}
+    accessToken=data.access_token;localStorage.setItem('daanyaAccessToken',accessToken);currentUser=await getCurrentUser();modal.classList.remove('show');
+    if(setAuthUI()) alert('Admin login successful.');
+  }catch(e){authStatus.textContent=e.message;}
+};
+
+document.getElementById('searchBtn').onclick=()=>{let x=document.getElementById('searchBox');x.style.display=x.style.display==='block'?'none':'block';if(x.style.display==='block')document.getElementById('searchInput').focus()};
+document.querySelectorAll('.filter').forEach(f=>f.onclick=()=>{document.querySelectorAll('.filter').forEach(x=>x.classList.remove('active'));f.classList.add('active');let v=f.dataset.filter;document.querySelectorAll('.card').forEach(c=>c.style.display=(v==='all'||c.dataset.cat===v)?'block':'none')});
+document.querySelectorAll('.shop').forEach(b=>b.onclick=()=>{let link=b.dataset.link;if(link&&link!=='#')window.open(link,'_blank');else alert('Add your Meesho or Myntra affiliate URL to this product button.')});
+document.getElementById('searchInput').oninput=e=>{let q=e.target.value.toLowerCase();document.querySelectorAll('.card').forEach(c=>c.style.display=c.innerText.toLowerCase().includes(q)?'block':'none')};
+
+const adminModal=document.getElementById('adminModal');
+const adminList=document.getElementById('adminList');
+const defaultProducts=[
+ {name:'Satin Evening Dress',price:'₹899',cat:'fashion',image:'',link:'#'},
+ {name:'Everyday Knit Top',price:'₹499',cat:'fashion',image:'',link:'#'},
+ {name:'Glow Essentials Set',price:'₹599',cat:'beauty',image:'',link:'#'},
+ {name:'Minimal Desk Lamp',price:'₹799',cat:'lifestyle',image:'',link:'#'}
+];
+let products=defaultProducts;
+
+function cleanProductName(name){
+  let n=String(name||'').trim();
+  // Older entries sometimes had source links appended to the product name.
+  const marker=n.search(/\s*\[1\]\s*/i);
+  if(marker>=0) n=n.slice(0,marker);
+  const urlMarker=n.search(/\s*https?:\/\//i);
+  if(urlMarker>=0) n=n.slice(0,urlMarker);
+  return n.replace(/\s+/g,' ').trim() || 'Untitled product';
+}
+
+async function loadProductsFromSupabase(){
+  try{
+    if(!window.supabase) throw new Error('Supabase library not loaded');
+    const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+    const {data:rows,error}=await client.from('products').select('id,created_at,name,price,category,image_url,affiliate_url').order('created_at',{ascending:false});
+    if(error) throw error;
+    if(Array.isArray(rows)&&rows.length){
+      const cleaned=rows.map(x=>({id:x.id,created_at:x.created_at,name:cleanProductName(x.name),price:x.price==null?'':`₹${x.price}`,cat:x.category||'lifestyle',image:x.image_url||'',link:x.affiliate_url||'#'}));
+      // If an older duplicate exists, keep only one copy. Prefer the copy
+      // that has a working saved image, so customers see the photo.
+      const unique=new Map();
+      for(const item of cleaned){
+        const key=item.name.toLowerCase();
+        const existing=unique.get(key);
+        if(!existing || (!existing.image && item.image)) unique.set(key,item);
+      }
+      products=Array.from(unique.values());
+    }
+    renderProducts();
+    renderProductDetail();
+  }catch(err){console.warn('Supabase products could not be loaded; using built-in products.',err);renderProducts();renderProductDetail();}
+}
+function productShareUrl(id){return `${window.location.origin}${window.location.pathname}?product=${encodeURIComponent(String(id))}`;}
+async function copyProductLink(id){
+  const url=productShareUrl(id);
+  try{
+    if(navigator.clipboard && window.isSecureContext){
+      await navigator.clipboard.writeText(url);
+    }else{
+      const ta=document.createElement('textarea');
+      ta.value=url;
+      ta.style.position='fixed';
+      ta.style.opacity='0';
+      document.body.appendChild(ta);
+      ta.focus(); ta.select();
+      document.execCommand('copy');
+      ta.remove();
+    }
+    alert('Product link copied!\n\n'+url);
+  }catch(e){
+    window.prompt('Copy this DAANYA product link:',url);
+  }
+}
+
+function renderCardMarkup(x){const link=(x.link||'').trim();const safeLink=/^https?:\/\//i.test(link)?link:'#';const img=x.image?`<img src="${String(x.image).replace(/"/g,'&quot;')}" alt="${String(x.name).replace(/"/g,'&quot;')}" style="width:100%;height:100%;object-fit:cover;display:block" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML='Image unavailable';">`:'DAANYA EDIT';const share=x.id?productShareUrl(x.id):'#';return `<article class="card" data-cat="${x.cat}"><a href="${share}" style="display:block"><div class="photo ${x.cat==='fashion'?'pink':x.cat==='beauty'?'gold':'cream'}">${img}</div></a><div class="card-body"><div class="tag">${x.cat}</div><h3>${x.name}</h3><div class="price">${x.price}</div>${safeLink!=='#'?`<a class="shop" href="${safeLink.replace(/"/g,'&quot;')}" target="_blank" rel="noopener noreferrer" data-product-id="${x.id||''}">Shop now</a>`:`<button class="shop" type="button" onclick="alert('Add the affiliate link for this product in Admin → Product Editor.')">Shop now</button>`}</div></article>`;}
+function renderProducts(){const grid=document.getElementById('productGrid');grid.innerHTML=products.map(renderCardMarkup).join('');grid.querySelectorAll('a.shop[data-product-id]').forEach(a=>a.addEventListener('click',()=>{const id=Number(a.dataset.productId);if(id) trackProductClick(id);}));renderAdminList();}
+function renderAdminList(){
+  adminList.innerHTML=products.map((x,i)=>{
+    const link=x.id?productShareUrl(x.id):'';
+    return `<div style="display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px 0;border-top:1px solid var(--line)">
+      <div style="min-width:0"><strong>${x.name}</strong><div style="color:var(--muted);font-size:12px">${x.price} · ${x.cat}</div></div>
+      <div class="admin-row-actions">
+        <button class="btn" onclick="editProduct(${i})">Edit</button>
+        ${link?`<button class="btn copy-link-btn" onclick="copyProductLink('${String(x.id).replace(/'/g,"\\'")}')">🔗 Copy Link</button>`:''}
+        <button class="btn" onclick="deleteProduct(${i})">Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function editProduct(i){const x=products[i];document.getElementById('editIndex').value=i;document.getElementById('pName').value=x.name;document.getElementById('pPrice').value=x.price.replace('₹','');document.getElementById('pCat').value=x.cat;document.getElementById('pImage').value=x.image||'';document.getElementById('pLink').value=x.link||'';}
+function getRequestedProductId(){return new URLSearchParams(window.location.search).get('product');}
+function renderProductDetail(){const detail=document.getElementById('productDetail'),home=document.getElementById('home'),requested=getRequestedProductId();if(!requested){detail.classList.remove('show');home.style.display='';return;}const product=products.find(x=>String(x.id)===String(requested));if(!product){detail.classList.remove('show');home.style.display='';return;}detail.classList.add('show');home.style.display='none';const img=document.getElementById('detailImage');img.src=product.image||'';img.alt=product.name;img.style.display=product.image?'block':'none';document.getElementById('detailName').textContent=product.name;document.getElementById('detailPrice').textContent=product.price;const shop=document.getElementById('detailShop'),safe=/^https?:\/\//i.test((product.link||'').trim());shop.href=safe?product.link:'#';shop.onclick=safe?()=>trackProductClick(Number(product.id)):()=>alert('This product does not have an affiliate link yet.');const detailCopy=document.getElementById('detailCopy'); if(detailCopy) detailCopy.style.display='none';const related=products.filter(x=>String(x.id)!==String(product.id)).slice(0,4);document.getElementById('relatedProducts').innerHTML=related.map(renderCardMarkup).join('');document.getElementById('relatedProducts').querySelectorAll('a.shop[data-product-id]').forEach(a=>a.addEventListener('click',()=>{const id=Number(a.dataset.productId);if(id) trackProductClick(id);}));}
+window.addEventListener('popstate',renderProductDetail);document.getElementById('detailBack').onclick=()=>{history.pushState({},'',window.location.pathname);renderProductDetail();};
+
+async function deleteProduct(i){
+  if(!setAuthUI()){alert('Admin login required.');return;}
+  if(!products[i].id){alert('This built-in sample cannot be deleted until a database product is created.');return;}
+  if(!confirm('Delete this product?'))return;
+  if(!window.supabase){alert('Supabase is still loading. Please refresh and try again.');return;}
+  const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{global:{headers:{Authorization:`Bearer ${accessToken}`}}});
+  const {error}=await client.from('products').delete().eq('id',products[i].id);
+  if(error){alert('Could not delete the product. '+error.message);return;}
+  products.splice(i,1);renderProducts();loadAdminAnalytics();
+}
+async function saveProduct(item,i){
+  if(!setAuthUI()){alert('Admin login required. Please log in again.');return false;}
+  if(!accessToken){alert('Your admin session has expired. Please log in again.');return false;}
+  if(!window.supabase){throw new Error('Supabase is still loading. Please refresh the page and try again.');}
+  const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{global:{headers:{Authorization:`Bearer ${accessToken}`}}});
+  const payload={name:item.name,price:item.price,category:item.cat,image_url:item.image||'',affiliate_url:item.link||''};
+  const isEdit=i>=0&&products[i].id;
+  let error;
+  if(isEdit){
+    ({error}=await client.from('products').update(payload).eq('id',products[i].id));
+  }else{
+    ({error}=await client.from('products').insert(payload));
+  }
+  if(error) throw new Error('Could not save the product. '+error.message);
+  // Do not use .single() here. RLS/PostgREST can legitimately return an empty
+  // representation even when the write succeeds. Reloading from the table
+  // gives every device the same persistent product data and image URL.
+  await loadProductsFromSupabase();
+  loadAdminAnalytics();
+  return true;
+}
+async function openAdmin(){if(!setAuthUI()){openAuth('login');return;}adminModal.classList.add('show');renderAdminList();loadAdminAnalytics();}
+document.getElementById('adminBtn').onclick=openAdmin;
+document.getElementById('adminShortcut').onclick=openAdmin;
+document.getElementById('adminClose').onclick=()=>adminModal.classList.remove('show');
+document.getElementById('productForm').onsubmit=async e=>{e.preventDefault();const i=+document.getElementById('editIndex').value;const raw=document.getElementById('pPrice').value.replace(/[₹,\s]/g,'');const file=document.getElementById('pImageFile').files[0];let image=document.getElementById('pImage').value.trim();if(!document.getElementById('pName').value.trim()||Number.isNaN(Number(raw))){alert('Enter a product name and valid price.');return;}try{if(file){const s=document.getElementById('imageUploadStatus');s.textContent='Uploading image…';image=await uploadProductImage(file);s.textContent='Image uploaded ✓';}const item={name:document.getElementById('pName').value.trim(),price:Number(raw),cat:document.getElementById('pCat').value,image,link:document.getElementById('pLink').value.trim()};const ok=await saveProduct(item,i);if(ok){e.target.reset();document.getElementById('editIndex').value=-1;document.getElementById('imageUploadStatus').textContent='';}}catch(err){alert(err.message||'Could not save the product.');document.getElementById('imageUploadStatus').textContent='';}};
+document.getElementById('clearForm').onclick=()=>{document.getElementById('productForm').reset();document.getElementById('editIndex').value=-1};
+
+getCurrentUser();
+renderProducts();
+renderProductDetail();
+loadProductsFromSupabase();
+(async()=>{
+  await trackVisitOnce();
+  await loadPublicVisitorCount();
+})();
+</script>
+</body>
+</html>
